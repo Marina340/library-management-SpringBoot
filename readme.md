@@ -130,7 +130,7 @@ This is a **Spring Boot Library Management System** with:
 - `POST /auth/login`
 - Body:
 
-```json
+json
 {
   "username": "admin",
   "password": "password"
@@ -148,45 +148,46 @@ Use in request headers for protected endpoints:
 
 Authorization: Bearer <JWT_TOKEN>
 
-Users (ADMIN only)
-Method	Endpoint	Description
-GET	/users	List all users
-POST	/users	Create new user
-PUT	/users/{id}	Update user
-DELETE	/users/{id}	Delete user
-Books
-Method	Endpoint	Roles Allowed	Notes
-GET	/books	ADMIN, LIBRARIAN, STAFF	Paginated, optional page & size
-GET	/books/{id}	ADMIN, LIBRARIAN, STAFF	Get specific book
-POST	/books	ADMIN, LIBRARIAN	Multipart: book JSON + coverImage
-PUT	/books/{id}	ADMIN, LIBRARIAN	Multipart: book JSON + optional coverImage
-DELETE	/books/{id}	ADMIN	Delete book
-Categories / Members / Publishers
+## Users (ADMIN only)
+- Method	Endpoint	Description
+- GET	/users	List all users
+- POST	/users	Create new user
+- PUT	/users/{id}	Update user
+- DELETE	/users/{id}	Delete user 
+## Books
+- Method	Endpoint	Roles Allowed	Notes
+- GET	/books	ADMIN, LIBRARIAN, STAFF	Paginated, optional page & size
+- GET	/books/{id}	ADMIN, LIBRARIAN, STAFF	Get specific book
+- POST	/books	ADMIN, LIBRARIAN	Multipart: book JSON + coverImage
+- PUT	/books/{id}	ADMIN, LIBRARIAN	Multipart: book JSON + optional coverImage
+- DELETE	/books/{id}	ADMIN	Delete book
+
+## Categories / Members / Publishers
 
 Similar CRUD endpoints.
 
 Roles:
 
-CREATE/UPDATE → ADMIN, LIBRARIAN
+- CREATE/UPDATE → ADMIN, LIBRARIAN
 
-DELETE → ADMIN
+- DELETE → ADMIN
 
-READ → ADMIN, LIBRARIAN, STAFF
+- READ → ADMIN, LIBRARIAN, STAFF
 
-Borrow Transactions
-Method	Endpoint	Roles Allowed
-POST	/borrow/borrowBook	ADMIN, LIBRARIAN, STAFF
-POST	/borrow/returnBook	ADMIN, LIBRARIAN, STAFF
-GET	/borrow/all	ADMIN, LIBRARIAN
+## Borrow Transactions
+- Method	Endpoint	Roles Allowed
+- POST	/borrow/borrowBook	ADMIN, LIBRARIAN, STAFF
+- POST	/borrow/returnBook	ADMIN, LIBRARIAN, STAFF
+- GET	/borrow/all	ADMIN, LIBRARIAN
 
-Borrow/return requires memberId and bookId or transactionId.
+- Borrow/return requires memberId and bookId or transactionId.
 
-User Activity Logs
-GET /logs → List all actions (ADMIN only)
+## User Activity Logs
+- GET /logs → List all actions (ADMIN only)
 
-GET /logs → List all actions by a specific user( username="" in request param )(ADMIN only)
+- GET /logs → List all actions by a specific user( username="" in request param )(ADMIN only)
 
-Pagination
+## Pagination
 
 All list endpoints support page and size request parameters:
 
@@ -282,7 +283,7 @@ Update application.properties / application.yml with DB credentials.
 
 Run the Spring Boot main class (LibraryManagementApplication.java).
 
-Notes
+# Notes
 
 Passwords: Must always be BCrypt hashed when creating users.
 
