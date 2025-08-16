@@ -202,12 +202,92 @@ curl -X POST "http://localhost:8080/books" \
 -F "book={\"title\":\"New Book\",\"isbn\":\"1234567890\"};type=application/json" \
 -F "coverImage=@/path/to/image.jpg"
 
+
+This project uses Spring Boot and Docker. The Java application runs in a container, while it connects to an external MySQL database (can be a local XAMPP/MySQL installation or another DB server).
+
+1. Prepare the Database
+
+Make sure MySQL is installed and running outside Docker (e.g., XAMPP, MAMP, or a remote DB).
+
+Create a database named library_db.
+
+CREATE DATABASE library_db;
+
+
+Run the SQL scripts to create tables and seed demo data:
+
+# If using MySQL CLI
+mysql -u root -p library_db < db/schema.sql
+mysql -u root -p library_db < db/data.sql
+
+
+If your root has no password, omit the -p flag:
+
+mysql -u root library_db < db/schema.sql
+mysql -u root library_db < db/data.sql
+
+2. Configure the Application
+
+The project reads DB credentials and server port from environment variables:
+
+SPRING_DATASOURCE_URL: "jdbc:mysql://<DB_HOST>:3306/library_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+SPRING_DATASOURCE_USERNAME: "root"
+SPRING_DATASOURCE_PASSWORD: ""  # empty if root has no password
+SERVER_PORT: "8080"
+JWT_SECRET: "YourSuperSecretKeyForJwtMustBeAtLeast32Bytes"
+JWT_EXPIRATION: "86400000"
+
+
+Update the docker-compose.yml environment section for the app service with your database host and credentials.
+Example for local XAMPP MySQL:
+
+SPRING_DATASOURCE_URL: "jdbc:mysql://host.docker.internal:3306/library_db?useSSL=false&serverTimezone=UTC"
+SPRING_DATASOURCE_USERNAME: "root"
+SPRING_DATASOURCE_PASSWORD: ""
+
+
+host.docker.internal allows Docker containers to access services running on your host machine.
+
+3. Build and Run the Docker Container
+
+Build the Spring Boot app image:
+
+docker compose build app
+
+
+Run the container:
+
+docker compose up -d
+
+
+Only the Java app container will run. No DB container is needed if using external MySQL.
+
+Check logs to ensure the app connected successfully:
+
+docker logs -f library-app
+
+4. Access the Application
+
+Base URL: http://localhost:8080 (or the port you configured)
+
+Login: POST /auth/login with username/password from seeded data.
+
+5. Optional: Run Without Docker
+
+You can also run the project directly from your IDE:
+
+Make sure the external MySQL database is running.
+
+Update application.properties / application.yml with DB credentials.
+
+Run the Spring Boot main class (LibraryManagementApplication.java).
+
 Notes
 
-Passwords must be BCrypt hashed.
+Passwords: Must always be BCrypt hashed when creating users.
 
-JWT tokens expire based on jwt.expiration property.
+JWT: Expiration is configured by JWT_EXPIRATION environment variable.
 
-All endpoints are secured and require roles as specified.
+External DB: Ensure the DB user has permissions for SELECT, INSERT, UPDATE, and DELETE on library_db.
 
-User activity logging is enabled for CRUD operations.
+File Uploads: Ensure your container has access to any directories storing book cover images if using multipart uploads.
